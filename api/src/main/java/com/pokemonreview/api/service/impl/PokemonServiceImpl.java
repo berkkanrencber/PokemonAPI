@@ -42,6 +42,30 @@ public class PokemonServiceImpl implements PokemonService {
         return pokemon.stream().map(p -> mapToDto(p)).collect(Collectors.toList());
     }
 
+    @Override
+    public PokemonDto getPokemonById(int id) {
+        Pokemon pokemon = pokemonRepository.findById(id).orElseThrow(()->new PokemonNotFoundException("Pokemon could not be found"));
+        return mapToDto(pokemon);
+    }
+
+    @Override
+    public PokemonDto updatePokemon(PokemonDto pokemonDto, int id) {
+        Pokemon pokemon = pokemonRepository.findById(id).orElseThrow(()->new PokemonNotFoundException("Pokemon could not be updated"));
+
+        pokemon.setName(pokemonDto.getName());
+        pokemon.setType(pokemonDto.getType());
+
+        Pokemon updatedPokemon = pokemonRepository.save(pokemon);
+
+        return  mapToDto(updatedPokemon);
+    }
+
+    @Override
+    public void deletePokemon(int id) {
+        Pokemon pokemon = pokemonRepository.findById(id).orElseThrow(()->new PokemonNotFoundException("Pokemon could not be delete"));
+        pokemonRepository.delete(pokemon);
+    }
+
     private PokemonDto mapToDto(Pokemon pokemon){ // Mapper function for converting pokemon model to pokemon dto
         PokemonDto pokemonDto = new PokemonDto();
         pokemonDto.setId(pokemon.getId());
